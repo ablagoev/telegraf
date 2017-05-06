@@ -88,7 +88,18 @@ func (s *Sensors) parse(acc telegraf.Accumulator) error {
 			if s.RemoveNumbers {
 				fieldName = numberRegp.ReplaceAllString(fieldName, "")
 			}
-			fieldValue, err := strconv.ParseFloat(strings.TrimSpace(splitted[1]), 64)
+
+			// Some versions of the sensors command duplicate the measurement name
+			// after the measurement value, i.e
+			// temp1_crit: 31.300 (temp1_crit)
+			// Thus use a RegExp to match the measurement, which should be a float
+			var re = regexp.MustCompile(`[0-9.]+`)
+			rawValue := re.Find([]byte(splitted[1]))
+			if rawValue == nil {
+				return errors.New("Could not parse sensors output")
+			}
+
+			fieldValue, err := strconv.ParseFloat(string(rawValue), 64)
 			if err != nil {
 				return err
 			}

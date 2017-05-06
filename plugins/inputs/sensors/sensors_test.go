@@ -311,8 +311,8 @@ func TestHelperProcess(t *testing.T) {
 
 	mockData := `acpitz-virtual-0
 temp1:
-  temp1_input: 8.300
-  temp1_crit: 31.300
+  temp1_input: 8.300 (temp1_input)
+  temp1_crit: 31.300 (temp1_crit)
 
 power_meter-acpi-0
 power1:
